@@ -1,16 +1,4 @@
-### ToDo ###
+### Cloud Computing Project ###
 
-I will eventually put a map of all the files and directories here
-
-### Reading Links ###
-
-We can compile a list of useful resources for people to go over, and
-then later include in our report here.
-
-
-https://drive.google.com/file/d/0B6VbMwsGEVoVeS1QdHVKRk1SenM/view
-
-
-Others coming soon... 
-
+Developed an open source Big Data Analytics Cloud infrastructure to provide an IDE to develop and test new algorithms for use in advanced analytical studies. Implemented it using RHEL 7.3, OpenStack 10, KVM/QEMU, Nutch, Cassandra, PostgreSQL
 
