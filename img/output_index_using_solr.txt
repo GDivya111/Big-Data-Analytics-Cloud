@@ -1,0 +1,4 @@
+[root@team1-dev-base local]# bin/nutch solrindex http://localhost:8983/solr/nutch_core -all
+SolrIndexerJob: starting
+Adding 46 documents
+SolrIndexerJob: done.

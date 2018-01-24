@@ -1,0 +1,113 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{graphicx}
+\usepackage[toc,page]{appendix}
+\usepackage{tabularx}
+\usepackage{float}
+\usepackage{chngpage}
+\usepackage{pifont}
+\usepackage{verbatim}
+\usepackage{enumerate}
+\usepackage[shortlabels]{enumitem}
+\usepackage{listings}
+\lstdefinestyle{Bash}
+{language=bash,
+keywordstyle=\color{blue},
+basicstyle=\ttfamily,
+morekeywords={nutch, bin, solr, csvsql, cat, openstack-status, curl},
+columns=fullflexible,
+alsoletter={:~\$},
+breaklines,
+%keywordstyle=[2]{\color{red}},
+%literate={\$}{{\textcolor{red}{\$}}}1
+%          {:}{{\textcolor{red}{:}}}1
+%          {~}{{\textcolor{red}{\textasciitilde}}}1
+}
+
+% References that allow ``mynote''
+\usepackage[style=trad-plain,datamodel=mynote]{biblatex}
+\addbibresource{bib/bib.bib}
+
+\usepackage{xpatch}
+\xapptobibmacro{finentry}{\par\printfield{mynote}}{}{}
+
+% Define a checkmark to use in assignment table
+\usepackage{tikz}
+\def\checkmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) --(.25,.15) -- cycle;}
+\newcommand{\xmark}{\ding{55}}
+
+% Command I like
+\newcommand{\mypara}[1]{\vspace{0.0em}\noindent\textbf{#1:}}
+
+\begin{document}
+
+  % Title Page
+  \begin{titlepage}
+    \centering
+    % NCSU Logo
+%    \includegraphics[width=0.15\textwidth]{img/ncsu-logo}\par\vspace{1cm}
+    % Title Header 
+    {\scshape\Large Homework 3/Final - Project Report:\par}
+    % Project Title
+    {\huge\bfseries Design and Implementation of an Analytics Cloud\par}
+    \vspace{1.4cm}
+    % Date
+    {\large\scshape \today\par}
+    % Team Number
+    {\large\scshape Team Number 1\par}
+    \vspace{1.4cm}
+    % Team Members
+    {\Large\itshape Amit Abhijit Barve\par}
+    {\Large\itshape Bhushan Sharad Deshmukh - Vice Lead\par}
+    {\Large\itshape Divya Guttikonda\par}
+    {\Large\itshape Isaac Polinsky - Lead\par}
+    {\Large\itshape Durgesh Subhash Rane\par}
+    \vspace{1.4cm}
+    % Department and University
+    {\Large\scshape Computer Science Department\par}
+    {\Large\scshape North Carolina State University\par}
+    \vspace{1.4cm}
+    % Supervisors
+    supervised by\par
+    Mr.~James \textsc{Hall}\par
+    Mr.~John \textsc{Streck}\par
+    Dr.~Michael \textsc{Kowolenko}
+    \vfill
+  \end{titlepage}
+
+  % Abstract
+  \input{abstract}
+  \nocite{*}
+  \newpage
+  % Contents, Figures, Tables
+  \tableofcontents
+  \newpage
+  \listoffigures
+  \newpage
+  \listoftables
+  \newpage
+
+  % Sections
+  \input{intro/intro}
+  \newpage
+  \input{requirements/requirements}
+  \newpage
+  \input{environment/environment}
+  \newpage
+  \input{des-impl/des-impl}
+  \newpage
+  \input{validation/validation}
+  \newpage
+  \input{schedule/schedule}
+  \newpage
+
+  % Bibliography
+  \addcontentsline{toc}{section}{References}
+
+  \printbibliography
+  \newpage
+
+  % Appendix
+  \begin{appendices}
+    \input{appendix/appendix}
+  \end{appendices}
+\end{document}

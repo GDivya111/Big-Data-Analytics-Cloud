@@ -1,0 +1,712 @@
+\subsection{Testing}
+\renewcommand{\thesubsubsection}{\textbf{FR-\arabic{subsubsection}}}
+\label{sec:testing}
+
+
+
+Here we show the method used to test, the expected
+result from the test, and the actual result from the test for each
+requirement listed in Section~\ref{sec:requirements}. %% This table only
+%% shows a summary of the output from each test, to see the full testing
+%% results see Appendix~\ref{app:testing}.
+\subsubsection{Impelemented on RHEL 7}
+\begin{enumerate}
+\item \textbf{Testcase}\newline Verify host machine has RHEL 7 as base Operating System
+  \begin{enumerate}[label={}]
+  \item \textbf{Procedure}\newline
+    RHEL 7 was already installed on the host machine
+    provided. Requirement was verified by running command
+    \begin{lstlisting}[style=Bash]
+      cat /etc/redhat-release
+    \end{lstlisting}
+  \item \textbf{Expected output}\newline
+    The \path{/etc/redhat-release} file contains the details of the
+    RED Hat version. This version should be 7.X.
+  \item \textbf{Result}\newline
+    \begin{figure}
+      \centering
+      \includegraphics[scale=0.4]{screenshots/rhel7.png}
+      \caption{RedHat Operating System version}
+      \label{rhel7}
+    \end{figure}
+  \end{enumerate}
+\end{enumerate}
+
+
+\subsubsection{Implemented in a cloud Environment}
+\begin{enumerate}
+\item \textbf{Testcase}\newline The Analytics platform is made up of 2
+  or more VMs and can be deployed on any other image compatible cloud environment.
+  \begin{enumerate}
+  \item \textbf{Procedure}\newline
+    The Virtual machines of Analytics platform can be exported to an
+    image format and these images can be deployed on other compatible cloud platforms.
+  \item \textbf{Expected output}\newline
+    Export Virtual machines into image format. We should be able to
+    import these images in other OpenStack environment.
+  \item \textbf{Result}\newline
+    \begin{figure}[H]
+      \centering
+      \includegraphics[scale=0.35]{screenshots/devanddbvm.png}
+      \caption{Developer \& Database VMs running in OpenStack}
+      \label{devanddbvm}
+    \end{figure}
+
+    \begin{figure}[H]
+      \centering
+      \includegraphics[scale=0.35]{screenshots/devanddbvm-snapshots.png}
+      \caption{Developer \& Database VM Snapshots}
+      \label{devanddbvm-snapshots}
+    \end{figure}
+  \end{enumerate}
+\end{enumerate}
+
+
+\subsubsection{Local cloud built using OpenStack}
+\begin{enumerate}
+\item \textbf{Testcase}\newline Verify all openstack services are running
+  \begin{enumerate}[label={}]
+  \item \textbf{Procedure}\newline
+    Execute below command to get the status of all running OpenStack services on the host machine.
+    \begin{lstlisting}[style=Bash]
+      openstack-status
+    \end{lstlisting}
+  \item \textbf{Expected output}\newline
+    Essential services of OpenStack, specifically, 
+    \begin{enumerate}
+    \item \textbf{\textit{nova}}
+    \item \textbf{\textit{neutron}}
+    \item \textbf{\textit{glance}}
+    \item \textbf{\textit{keystone}}
+    \item \textbf{\textit{horizon}}
+    \item \textbf{\textit{cinder}}
+    \end{enumerate}
+  \item \textbf{Result}\newline
+    \begin{figure}
+      \centering
+      \includegraphics[height=12cm,width=9cm]{screenshots/openstack-services.png}
+      \caption{OpenStack running Services}
+      \label{openstack-services}
+    \end{figure}
+
+    \begin{figure}
+      \centering
+      \includegraphics[scale=0.33]{screenshots/openstack-horizon.png}
+      \caption{OpenStack Horizon Interface}
+      \label{openstack-horizon}
+    \end{figure}
+  \end{enumerate}
+\end{enumerate}
+
+
+\subsubsection{Developer VM}
+\begin{enumerate}
+\item \textbf{Testcase}\newline A separate Developer VM with data
+  analysis packages pre-installed is available to the user.
+  \begin{enumerate}[label={}]
+  \item \textbf{Procedure}\newline
+    Create a RHEL VM using OpenStack. Install and configure below data analytics
+    packages
+    \begin{enumerate}
+    \item \textbf{Nutch}
+    \item \textbf{Solr}
+    \item \textbf{UIMA}
+    \item \textbf{Mortar}
+    \item \textbf{Portrait}
+    \end{enumerate}
+  \item \textbf{Expected output}\newline
+    Log into the OpenStack Horizon dashboard. Go to instances
+    section. A developer VM should be up and running.
+  \item \textbf{Result}\newline
+    A running Developer VM (named \emph{team1-dev-base}) can be seen in Figure \ref{devanddbvm}.
+  \end{enumerate}
+\end{enumerate}
+
+
+\subsubsection{Storage VM}
+\begin{enumerate}
+\item \textbf{Testcase}\newline A separate Storage VM with PostGreSQL
+  and Cassandra database services is available to the user.
+  \begin{enumerate}[label={}]
+  \item \textbf{Procedure}\newline
+    Create a RHEL VM using OpenStack. Install and configure \textbf{Cassandra}
+    and \textbf{PostGreSQL} packages.
+  \item \textbf{Expected output}\newline
+    Log into the OpenStack Horizon dashboard. Go to instances
+    section. A Storage VM should be up and running.
+  \item \textbf{Result}\newline
+    A running Storage VM (named \emph{team1-db-base}) can be seen in Figure \ref{devanddbvm}.
+  \end{enumerate}
+\end{enumerate}
+
+
+\subsubsection{GPFS backed deployment}
+\begin{enumerate}
+\item \textbf{Testcase}\newline Verify that glance is properly configured to used GPFS backend
+  \begin{enumerate}[label={}]
+  \item \textbf{Procedure}\newline
+    Configure OpenStack glance service to use GPFS as backend.
+    In file \path{/etc/glance/glance-api.conf} set parameter
+    \textbf{\textit{filesystem\_store\_datadir}} value to \path{/gpfs/OpenStack/glance/images}.
+    Restart glance service and create few snapshosts.
+  \item \textbf{Expected output}\newline
+    Glance service should restart properly with updated configuration.
+  \item \textbf{Result}\newline
+    \begin{figure}
+      \centering
+      \includegraphics[scale=0.4]{screenshots/gpfs-conf.png}
+      \caption{Updated Glance Configuration to use GPFS backend}
+      \label{gpfs-conf}
+    \end{figure}
+  \end{enumerate}
+
+\item \textbf{Testcase}\newline Verify all images created by glance are stored in GPFS
+  \begin{enumerate}[label={}]
+  \item \textbf{Procedure}\newline
+    Configure OpenStack glance service to use GPFS as backend and
+    create few snapshots. Run below \textbf{ls} command on
+    \path{/gpfs/OpenStack/glance/images}.
+    The directory should contain all images created using OpenStack
+    glance service.
+  \item \textbf{Expected output}\newline
+    Glance service should restart properly with updated configuration.
+  \item \textbf{Result}\newline
+    \begin{figure}
+      \centering
+      \includegraphics[scale=0.4]{screenshots/gpfs-storage.png}
+      \caption{Glance using GPFS backend for storing images}
+      \label{gpfs-storage}
+    \end{figure}
+  \end{enumerate}
+
+\end{enumerate}
+
+
+\subsubsection{Developer VM must allow web scraping}
+\begin{enumerate}
+\item \textbf{Testcase}\newline Inject URLs into Nutch
+  \begin{enumerate}[label={}]
+  \item \textbf{Procedure}\newline
+    Create a file \path{/opt/nutch/runtime/local/urls/seed.txt} and
+    insert URLs to be crawled into that file. Run
+    \begin{lstlisting}[style=Bash]
+      nutch inject urls
+    \end{lstlisting}
+  \item \textbf{Expected output}\newline
+    Number of URLs injected (as shown in output of above command)
+    should be same as total number of URLs in \path{seed.txt}
+    file. InjectorJob output should show that it is using Cassandra store.
+  \item \textbf{Result}\newline
+    In Figure \ref{nutch-seedfile} nutch input seed file can be
+    seen. Figure \ref{nutch-inject} shows Nutch using Cassandra store
+    for injected URLs.
+    \begin{figure}
+      \centering
+      \includegraphics[scale=0.4]{screenshots/nutch-seedfile.png}
+      \caption{Nutch input URLs using seed.txt file}
+      \label{nutch-seedfile}
+    \end{figure}
+
+    \begin{figure}
+      \centering
+      \includegraphics[scale=0.4]{screenshots/nutch-inject.png}
+      \caption{Nutch URL injection successful}
+      \label{nutch-inject}
+    \end{figure}
+  \end{enumerate}
+
+
+\item \textbf{Testcase}\newline Generate a batch of URLs from injected
+  URLs
+  \begin{enumerate}[label={}]
+  \item \textbf{Procedure}\newline
+    Run below command on developer VM to create nutch batch of 500 URLs.
+    \begin{lstlisting}[style=Bash]
+      nutch generate -topN 500
+    \end{lstlisting}
+  \item \textbf{Expected output}\newline
+    The command should executed without any errors and output should
+    show \textbf{\textit{topN: 500}}
+  \item \textbf{Result}\newline
+    \begin{figure}
+      \centering
+      \includegraphics[scale=0.4]{screenshots/nutch-generate.png}
+      \caption{Nutch URL batch Generation}
+      \label{nutch-generate}
+    \end{figure}
+  \end{enumerate}
+
+
+\item \textbf{Testcase}\newline Start a fetch job from Nutch
+  \begin{enumerate}[label={}]
+  \item \textbf{Procedure}\newline
+    Using below command 
+    \begin{lstlisting}[style=Bash]
+      nutch fetch <batch-id> -resume
+    \end{lstlisting}
+    start nutch fetch job for batch of URLs in given batch-id.
+  \item \textbf{Expected output}\newline
+    The output generated in this phase should show all connected URLs
+    being fetched. 
+  \item \textbf{Result}\newline
+    \begin{figure}
+      \centering
+      \includegraphics[scale=0.4]{screenshots/nutch-fetch.png}
+      \caption{Nutch fetchecd URLs}
+      \label{nutch-fetch}
+    \end{figure}
+  \end{enumerate}
+
+
+\item \textbf{Testcase}\newline Parse fetched URLs
+  \begin{enumerate}[label={}]
+  \item \textbf{Procedure}\newline
+    Run below command to parse fetched URLs.
+    \begin{lstlisting}[style=Bash]
+      nutch parse <batch-id> -force
+    \end{lstlisting}
+  \item \textbf{Expected output}\newline
+    The output of parse command should have a parsing entry for each
+    URL listed in \path{seed.txt}.
+  \item \textbf{Result}\newline
+    Figure \ref{nutch-parse} shows all URLs provided in \path{seed.txt} file being parsed.
+    \begin{figure}
+      \centering
+      \includegraphics[scale=0.4]{screenshots/nutch-parse.png}
+      \caption{Nutch URL Parsing}
+      \label{nutch-parse}
+    \end{figure}
+  \end{enumerate}
+
+\item \textbf{Testcase}\newline Index parsed data with Solr
+  \begin{enumerate}[label={}]
+  \item \textbf{Procedure}\newline
+    Run below command to upload parsed data into Solr and make
+    Solr index it.
+    \begin{lstlisting}[style=Bash]
+      nutch solrindex
+    \end{lstlisting} 
+  \item \textbf{Expected output}\newline
+    Solr dashboard should show the data uploaded from Nutch (Document
+    count for nutch data should be non-zero)
+  \item \textbf{Result}\newline
+    Figure \ref{nutch-index} shows all documents being indexed by
+    Solr. Figure \ref{nutch-solr} shows Solr dashboard with all
+    indexed documents.
+    \begin{figure}
+      \centering
+      \includegraphics[scale=0.4]{screenshots/nutch-index.png}
+      \caption{Data Parsed by Nutch being indexed by Solr}
+      \label{nutch-index}
+    \end{figure}
+
+    \begin{figure}
+      \centering
+      \includegraphics[scale=0.4]{screenshots/nutch-solr.png}
+      \caption{Solr dashboard shows documents fetched by Nutch}
+      \label{nutch-solr}
+    \end{figure}
+  \end{enumerate}
+
+\end{enumerate}
+
+
+
+\subsubsection{Storage VM must store structured and unstructured data}
+\begin{enumerate}
+\item \textbf{Testcase}\newline Storage VM must have Cassandra for
+  storing unstructured data and PostGreSQL for storing structured data.
+  \begin{enumerate}[label={}]
+  \item \textbf{Procedure}\newline
+    Log into the Storage VM. Install and configure Cassandra and
+    PostgreSQL.
+  \item \textbf{Expected output}\newline
+    Nutch should be able to store the crawled data (unstructured data)
+    into Storage VM Cassandra Database. The user should be able to
+    inject a structured data into PostGreSQL database.
+  \item \textbf{Result}\newline
+    Figure \ref{nutch-cassandra} shows Unstructured data being stored
+    in Cassandra by Nutch.
+    \begin{figure}
+      \centering
+      \includegraphics[scale=0.4]{screenshots/nutch-cassandra.png}
+      \caption{Cassandra Unstructured data stored by Nutch}
+      \label{nutch-cassandra}
+    \end{figure}
+  \end{enumerate}
+\end{enumerate}
+
+
+\subsubsection{Developer VM - Data indexer}
+\begin{enumerate}
+\item \textbf{Testcase}\newline Developer VM must have Apache Solr
+  6.3.0 installed to index unstructured data crawled by Nutch.
+  \begin{enumerate}[label={}]
+  \item \textbf{Procedure}\newline
+    Start running Nutch. Once Nutch finishes parsing all crawled URLs,
+    upload that parsed URL data into Solr. 
+  \item \textbf{Expected output}\newline
+    Solr should be able to index data provided by Nutch. The data can
+    be queried using Solr dashboard.
+  \item \textbf{Result}\newline
+    Figure \ref{solr-version} shows Solr installed on Dev VM. Figure
+    \ref{solr-query} shows Solr web interfaces responding to \emph{SELECT} query.
+    \begin{figure}
+      \centering
+      \includegraphics[scale=0.4]{screenshots/solr-version.png}
+      \caption{Solr installed and running on Developer VM}
+      \label{solr-version}
+    \end{figure}
+    \begin{figure}
+      \centering
+      \includegraphics[scale=0.32]{screenshots/solr-query.png}
+      \caption{Solr query returns indexed data}
+      \label{solr-query}
+    \end{figure}
+  \end{enumerate}
+\end{enumerate}
+
+
+\subsubsection{Developer VM - Data Filtering}
+\begin{enumerate}
+\item \textbf{Testcase}\newline Verify that Mortar is able to filter
+ indexed data from Solr.
+  \begin{enumerate}[label={}]
+  \item \textbf{Procedure}\newline
+    Log into the Mortar interface. Create a filter tree and Query Solr
+    with that filter tree.
+  \item \textbf{Expected output}\newline
+    Solr dashboard should show filtered data stored in 'mortar\_core' folder.
+  \item \textbf{Result}\newline
+    Figure \ref{mortar-filter} shows Mortar interface used to query
+    data from Nutch using PESTLE tree. Figure \ref{mortar-core} shows
+    filtered data (Nutch core had 46 documents after filtering through
+    mortar we have 36 documents) in mortar\_core project.
+    \begin{figure}
+      \centering
+      \includegraphics[scale=0.4]{screenshots/mortar-filter.png}
+      \caption{Mortar PESTLE tree based query on Nutch data}
+      \label{mortar-filter}
+    \end{figure}
+
+    \begin{figure}
+      \centering
+      \includegraphics[scale=0.35]{screenshots/mortar-core.png}
+      \caption{Mortar filtered data indexed by Solr}
+      \label{mortar-core}
+    \end{figure}
+  \end{enumerate}
+\end{enumerate}
+
+\subsubsection{Developer VM - Annotations on indexed data}
+\begin{enumerate}
+\item \textbf{Testcase}\newline Verify that filtered data in Solr can
+  be annotated by Apache UIMA.
+  \begin{enumerate}[label={}]
+  \item \textbf{Procedure}\newline
+    Using Apache UIMA 2.9.0, Eclipse workbench and Apache Ant create
+    an annotator jar. Add annotator jar into Solr libraries and
+    configure Solr to use this jar while indexing. Restart Solr to
+    re-index and annotate filtered data.
+  \item \textbf{Expected output}\newline
+    Solr dashboard should show annotated data stored in 'uima\_core' folder.
+  \item \textbf{Result}\newline
+    Figure \ref{uima-annotator} shows annotator jar configuration for Solr.
+    Figure \ref{uima-core} shows filtered data from 'mortar\_core'
+    project being annotated using annotator jar provided to Solr.
+    \begin{figure}
+      \centering
+      \includegraphics[scale=0.4]{screenshots/uima-annotator.png}
+      \caption{Annotator jar configuration for Solr}
+      \label{uima-annotator}
+    \end{figure}
+    \begin{figure}
+      \centering
+      \includegraphics[scale=0.27]{screenshots/uima-core.png}
+      \caption{Annotated Documents}
+      \label{uima-core}
+    \end{figure}
+  \end{enumerate}
+\end{enumerate}
+
+
+\subsubsection{Storage VM - allow data import from CSV}
+\begin{enumerate}
+\item \textbf{Testcase}\newline Verify that PostGreSQL is
+    able to import data generated by Solr in CSV format.
+  \begin{enumerate}[label={}]
+  \item \textbf{Procedure}\newline
+    Export annotated data from Solr into CSV format using below
+    command
+    \begin{lstlisting}[style=Bash]
+      curl http://localhost:8983/solr/uima_core/select?indent=on&q=cur
+      rency:*&wt=csv > currency.csv
+    \end{lstlisting}
+    Import CSV file into PostGreSQL using below command
+    \begin{lstlisting}[style=Bash]
+    csvsql --db
+    postgresql://team1_user:team1@localhost:5432/mortar --insert --encoding
+    utf-8 --delimiter \, --quotechar \” --no-constraints --no-inference
+    \end{lstlisting}
+
+  \item \textbf{Expected output}\newline
+    The data from CSV file should be available in PostGreSQL in
+    structured format.
+  \item \textbf{Result}\newline
+    Figure \ref{csv-export} shows annotated data exported into
+    \path{currency.csv} file. Figure \ref{csv-import} shows that all
+    annotated data was succssfully imported into PostGreSQL tables.
+    \begin{figure}
+      \centering
+      \includegraphics[scale=0.4]{screenshots/csv-export.png}
+      \caption{Annotated data exported into CSV}
+      \label{csv-export}
+    \end{figure}
+    \begin{figure}
+      \centering
+      \includegraphics[scale=0.4]{screenshots/csv-import.png}
+      \caption{Import annotated data into PostGreSQL}
+      \label{csv-import}
+    \end{figure}
+  \end{enumerate}
+\end{enumerate}
+
+\subsubsection{Developer VM - Data visualization}
+\begin{enumerate}
+\item \textbf{Testcase}\newline Verify that structured data from
+  PostGreSQL database can be visualized using Portrait.
+  \begin{enumerate}[label={}]
+  \item \textbf{Procedure}\newline
+    Log into the Portrait interface and query the structured data.
+  \item \textbf{Expected output}\newline
+    The query should return correct data.
+  \item \textbf{Result}\newline
+    Figure \ref{explorer} shows portrait interface used for querying
+    structured data from PostGreSQL.
+    \begin{figure}
+      \centering
+      \includegraphics[scale=0.27]{screenshots/explorer.png}
+      \caption{Data visualization using Portrait}
+      \label{explorer}
+    \end{figure}
+  \end{enumerate}
+\end{enumerate}
+
+
+\subsubsection{Access control}
+\begin{enumerate}
+\item \textbf{Testcase}\newline Verify
+  \begin{enumerate}
+    \item Host machine can only be accessed from OscarProxy
+      machine. No direct ssh to Host machine is allowed
+    \item VMs can only be accessed from OscarProxy machine or from
+      Host machine.
+    \item User should not be able to SSH into Storage VM.
+  \end{enumerate}
+  \begin{enumerate}[label={}]
+  \item \textbf{Procedure}\newline
+    \begin{enumerate}
+      \item Add Host machine, Developer VM and Storage VM into same
+        VLAN which can be accessed from OscarProxy machine.
+      \item Create a virtual switch in host machine which allows VMs
+        to connect to host machine and external network.
+      \item Create a separate system user account into Developer VM
+        which will allow the client to SSH into Developer VM.
+      \item Setup a PostGreSQL client into Developer VM which should be
+        able to connect to PostGreSQL server (running on Storage VM)
+        using same client credentials.
+     \end{enumerate}
+  \item \textbf{Expected output}\newline
+    \begin{enumerate}
+      \item SSH to host machine, Developer VM and Storage VM from
+        OscarProxy machine should be successful.
+      \item SSH from host machine to Developer VM and Storage VM
+        should be successful.
+      \item Verify that user credentials can be used to SSH into
+        Developer VM and has access to Nutch, Solr and Mortar.
+      \item Verify that user can access PostGreSQL Server from Developer
+        machine using PostGreSQL Client.
+     \end{enumerate}    
+  \item \textbf{Result}\newline
+    Figure \ref{ssh-db-dev-host} shows successful ssh into Host
+    machine (csc-kvm-10.oscar.priv, IP: 10.26.10.10), into Dev machine
+    (IP: 10.26.10.26), into DB machine (IP: 10.26.10.25) from
+    OscarProxy machine. 
+    Figure \ref{ssh-dev} shows ssh from
+    host machine (csc-kvm-10.oscar.priv) into Dev machine and also
+    shows Apache ant, Nutch, Apache Solr and Mortar installed into
+    Developer VM.
+    Figure \ref{ssh-db} shows ssh from host machine into Storage machine
+    and also shows PostGreSQL and Cassandra installed into Storage VM.
+    \begin{figure}
+      \centering
+      \includegraphics[scale=0.4]{screenshots/ssh-db-dev-host.png}
+      \caption{SSH into Host, Dev and DB machine from OscarProxy machine}
+      \label{ssh-db-dev-host}
+    \end{figure}
+    \begin{figure}
+      \centering
+      \includegraphics[scale=0.4]{screenshots/ssh-dev.png}
+      \caption{Developer machine setup with Nutch, Solr and Mortar}
+      \label{ssh-dev}
+    \end{figure}
+    \begin{figure}
+      \centering
+      \includegraphics[scale=0.4]{screenshots/ssh-db.png}
+      \caption{Storage VM setup with PostGreSQL and Cassandra}
+      \label{ssh-db}
+    \end{figure}
+  \end{enumerate}
+\end{enumerate}
+
+
+%% \subsubsection{Local Cloud deployed on hardware supplied by ITng.}
+%% \begin{enumerate}
+%% \item \textbf{Testcase}\newline 
+%%   \begin{enumerate}[label={}]
+%%   \item \textbf{Procedure}\newline
+%%   \item \textbf{Expected output}\newline
+%%   \item \textbf{Result}\newline
+%%   \end{enumerate}
+%% \end{enumerate}
+
+
+%% \subsubsection{Intuitive work flow and use}
+%% \begin{enumerate}
+%% \item \textbf{Testcase}\newline 
+%%   \begin{enumerate}[label={}]
+%%   \item \textbf{Procedure}\newline
+%%   \item \textbf{Expected output}\newline
+%%   \item \textbf{Result}\newline
+%%   \end{enumerate}
+%% \end{enumerate}
+
+%% \subsubsection{Reduce unneede software}
+%% \begin{enumerate}
+%% \item \textbf{Testcase}\newline 
+%%   \begin{enumerate}[label={}]
+%%   \item \textbf{Procedure}\newline
+%%   \item \textbf{Expected output}\newline
+%%   \item \textbf{Result}\newline
+%%   \end{enumerate}
+%% \end{enumerate}
+
+
+%% \subsubsection{Support a single user}
+%% \begin{enumerate}
+%% \item \textbf{Testcase}\newline 
+%%   \begin{enumerate}[label={}]
+%%   \item \textbf{Procedure}\newline
+%%   \item \textbf{Expected output}\newline
+%%   \item \textbf{Result}\newline
+%%   \end{enumerate}
+%% \end{enumerate}
+
+
+%% \subsubsection{Extensibility}
+%% \begin{enumerate}
+%% \item \textbf{Testcase}\newline 
+%%   \begin{enumerate}[label={}]
+%%   \item \textbf{Procedure}\newline
+%%   \item \textbf{Expected output}\newline
+%%   \item \textbf{Result}\newline
+%%   \end{enumerate}
+%% \end{enumerate}
+
+%% \subsubsection{Testability}
+%% \begin{enumerate}
+%% \item \textbf{Testcase}\newline 
+%%   \begin{enumerate}[label={}]
+%%   \item \textbf{Procedure}\newline
+%%   \item \textbf{Expected output}\newline
+%%   \item \textbf{Result}\newline
+%%   \end{enumerate}
+%% \end{enumerate}
+
+
+
+  %% \begin{center}
+  %% \begin{adjustwidth}[]{-1in}{-1in}
+  %%   \begin{table}[H]
+  %%     \caption{Testing plan describing how each requirement will be
+  %% tested, what the expected value or result of the test is, and what the
+  %% actual value or result was.}\label{tab:testingplan}
+  %%     \begin{tabularx}{\textwidth}{| p{3cm} | X | X | X | X | X |}
+
+  %%       \hline
+  %%       Requirement & Test Description & Expected Result & Actual Result \\ \hline
+
+  %%       Implemented on RHEL 7  & Show output of 'cat
+  %%       /etc/redhat-release' on both Host machine and VMs & Output
+  %%       should be 'Red Hat Enterprise Linux Server release 7.X' & \\ \hline
+
+  %%       Implemented in a cloud Environment & & & \\ \hline
+
+  %%        Local cloud build with OpenStack & Show output of
+  %%       'openstack-status' command. & The output should all required
+  %%       openstack services up and running. All required services include
+  %%       'nova', 'neutron', 'glance', 'keystone', 'horizon', 'cinder' & \\ \hline
+
+  %%       Local cloud deployed in Oscar Lab & & & \\ \hline
+
+  %%       GPFS Backed Deployment & Show configurations changes done in
+  %%       'glance-api.conf'. Show the output of 'ls' in /gpfs/OpenStack/
+  %%       directory. It should contain a glance directory which in turn
+  %%       should contain all images created from openstack (run ls in
+  %%       /gpfs/OpenStack/glance). & & \\ \hline
+
+  %%       Dev VM Web Scraping & 1.Inject URLs into Nutch (show output). 2.
+  %%       Run batch generate command on nutch (show output). 3. Start
+  %%       nutch fetch job to fecth from the URLs 4. Parse all fetched urls
+  %%       using 'nutch parse'. 5. Upload the generated nutch data into
+  %%       cassandra database using 'nutch updatedb'. 6. Login to cassandra
+  %%       and see if data is present& & \\ \hline
+
+  %%       Store Structure and Unstructured Data & & & \\ \hline
+
+  %%       Dev VM must have data indexer & & & \\ \hline
+
+  %%       Dev VM must allow annotations on indexed data & & & \\ \hline
+
+  %%     \end{tabularx}
+  %%   \end{table}
+  %% \end{adjustwidth}
+  %% \end{center}
+
+  %% \begin{center}
+  %% \begin{adjustwidth}[]{-1in}{-1in}
+  %%   \begin{table}[H]
+  %%     \caption{Testing plan describing how each requirement will be
+  %% tested, what the expected value or result of the test is, and what the
+  %% actual value or result was. (Continued)}\label{tab:testingplan2}
+  %%     \begin{tabularx}{\textwidth}{| p{3cm} | X | X | X | X | X |}
+
+  %%       \hline
+  %%       Requirement & Test Description & Expected Result & Actual Result \\ \hline
+
+  %%       DB VM must support data import via CSV & & & \\ \hline
+
+  %%       Dev VM must visualize data & & & \\ \hline
+
+  %%       One or more Dev VMs & & & \\ \hline
+
+  %%       One or more DB VMs & & & \\ \hline
+
+  %%       Access Control & & & \\ \hline
+
+  %%       Intuitive Work Flow/Use & & & \\ \hline
+
+  %%       Reduce unneeded software & & & \\ \hline
+
+  %%       Support single user & & & \\ \hline
+
+  %%       Extensibility & & & \\ \hline
+
+  %%       Testability & & & \\ \hline
+
+  %%     \end{tabularx}
+  %%   \end{table}
+  %% \end{adjustwidth}
+  %% \end{center}
+
+

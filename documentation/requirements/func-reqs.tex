@@ -1,0 +1,87 @@
+\subsection{Functional Requirements}
+\label{sec:func-reqs}
+
+The cloud platform must provide the following (FR = Functional Requirement):
+\begin{enumerate}[label=\textbf{FR-\arabic*}]
+\item \textbf{Implemented on RHEL 7:} 
+
+  The base operating system on the host and the operating system
+  for the developer and data storage VMs must be Red Hat Enterprise
+  Linux 7.
+  
+\item \textbf{Implemented in a cloud environment:}
+
+  The analytics platform must be deployed as a cloud environment or
+  an environment easily recreatable in a public cloud.
+
+\item \textbf{Local cloud built using OpenStack:} 
+
+  All guest VMs must run in an OpenStack deployment installed 
+  locally on the supplied host machine. OpenStack will be deployed on
+  the single machine using the OpenStack PackStack tool managed by
+  RDO~\cite{rdo} to manage the deployment.
+
+
+\item \textbf{Developer VM:}
+  
+  The platform must include one or more developer VMs with
+  preinstalled packages for data analysis.
+
+\item \textbf{Storage VM:}
+  
+  The platform must include one or more data storage VMs
+  preconfigured to store structured and unstructured data.
+
+
+\item \textbf{GPFS backed Deployment:}
+
+  The analytics platform must use the IBM GPFS supplied by ITng to
+  store images with Glance and as a back-end for running instances
+  with Nova. 
+
+\item \textbf{Developer VM must allow web scraping:} 
+
+  The developer VM must have Apache Nutch 2.2.1 installed to 
+  allow a data analyst to crawl the web for unstructured data.
+
+\item \textbf{Storage VM must store structured and unstructured data:}
+  
+  The storage VM must have Apache Cassandra 2.2.8 installed to store
+  unstructured data gathered from web crawling and PostgreSQL 9.2.1
+  installed to store structured data.
+
+\item \textbf{Developer VM must include a data indexer:}
+
+  The developer VM must have Apache Solr 6.3.0 installed to index 
+  unstructured data obtained from crawling the web
+
+\item \textbf{Developer VM must allow data filtering:}
+
+  The developer VM must have the Mortar web application to easily
+  apply filters to unstructured data index in Solr.
+
+\item \textbf{Developer VM must allow annotations on indexed data:}
+
+  The developer VM must allow users to create and insert annotations 
+  on indexed data to convert from unstructured to structured data. 
+  Apache Ant 1.9.6, Apache UIMA 2.9.0, and Eclipse Workbench must be
+  installed to support the creation and installation of annotations.
+
+\item \textbf{Storage VM must allow for data import via CSV:}
+
+  The storage VM must accept structured data in a CSV format from 
+  the developer VM. Likewise, the developer VM must support exporting
+  structured data in a CSV format from Solr to a PostgreSQL database.
+
+\item \textbf{Developer VM must support visualization of data:}
+
+  The developer VM must have Portrait installed to allow a user to
+  view structured data stored in the PostgreSQL database.
+
+\item \textbf{Access Control:}
+
+  The platform must employ access control to VMs preventing the
+  unauthorized access to virtual machines and the host machine.
+
+
+\end{enumerate}

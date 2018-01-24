@@ -1,0 +1,28 @@
+\subsection{Problem Statement}
+\label{sec:problem}
+
+Current open-sourced analytic packages are built for a few specific data
+sets and data analysts must pick a platform that fits their data best. The
+Institute for Next Generation IT Systems (ITng) wishes to provide,
+maintain, and use a ``master image'' containing all such services in one
+platform. Users will then be able to choose the services they need to fit
+their data set and the environment will be set up with minimal
+configuration and interaction.
+
+In a data analysis engine, data goes through three major data 
+transformation steps. \textit{Data Input}, \textit{In-depth Data Analysis},
+and \textit{Presentation of Results}. For each one of these steps there are
+many different tools and packages a consumer could use, each with their
+own advantages based on the use case and the data set. This project aims
+to set up an initial base platform for a data analytics engine, then build 
+a data analysis package using this platform. This platform can then be 
+expanded further by future developers to support other data analysis
+packages.
+
+The final deliverables of this project are an analytics cloud platform built
+using OpenStack PackStack on a physical host in the Oscar Lab running Red
+Hat Enterprise Linux 7.3 and a data analytics engine with the following
+features: web crawling using Apache Nutch, storing unstructured data
+with Apache Cassandra, indexing and structuring data with Solr/Lucene,
+storing structured data with PostgreSQL, filtering data with Mortar and
+visualizing data with Portrait. 

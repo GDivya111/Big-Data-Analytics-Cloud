@@ -1,0 +1,32 @@
+\section{Common PackStack Errors and Fixes}
+\label{app:errors}
+
+When installing PackStack a few common errors repeatedly occurred. This
+section contains the fixes to these errors.
+
+\subsection{Instance Launch Errors}
+
+During instance launch two errors occurred on multiple occasions.
+
+\subsubsection{Host is not mapped to any cell}
+
+There was very little to no documentation on this error but the
+following command fixed the problem.
+
+\begin{lstlisting}[escapechar=&]
+sudo nova-manage cell_v2 simple_cell_setup
+\end{lstlisting}
+
+Running this command usually resulted in a message stating ``cell0
+already setup'' but this command removed the Host not mapped to any cell
+error.
+
+\subsubsection{No hypervisors Available}
+
+This error is very simple and caused by libvirtd not being properly
+started during the RDO OpenStack PackStack install. The following
+command brings the hypervisor back online.
+
+\begin{lstlisting}[escapechar=&]
+sudo service libvirtd restart
+\end{lstlisting}

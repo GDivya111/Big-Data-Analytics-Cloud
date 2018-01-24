@@ -1,0 +1,51 @@
+\subsection{Issues}
+\label{sec:issues}
+The design of a data analytics platform to provide a solution to the
+problem presented in Section~\ref{sec:problem} must address many issues.
+The following list identifies the major issues and briefly discusses
+why the issues are important. Details about how the issues are 
+addressed by our system are covered in Section~\ref{sec:design}.  
+
+\begin{enumerate}
+  \item \textbf{Security}
+
+    When a consumer transitions to the cloud, they effectively give
+control of their data to a trusted entity. That trusted entity, the
+cloud provider, must be able to make guarantees about the security of their
+customers data. For example, who can access or change data, who
+has accessed or changed data, how was data changed, etc. Security is a
+large task not to be taken lightly and we address some, but not all, of
+these security concerns in Section~\ref{sec:security}.
+
+  \item \textbf{Portability}
+
+    Following security, portability of the analysis engines is the
+next biggest concern. Due to the high cost of running computationally
+expensive algorithms in the cloud, consumers can save money by testing
+and developing algorithms locally and then moving to the cloud for
+production analysis. Similarly, consumers may find it beneficial
+to move from cloud to cloud to capitalize on lower computation prices.
+To support this, clouds must have support for similar image formats as
+each other and the testing/development environment. The issue of
+portability is addressed in Section~\ref{sec:portability}
+
+  \item \textbf{Dealing with Unstructured Data}
+
+    Data collection is happening at rates much faster than it can be
+properly stored in a meaningful structured manner, thus it is crucial
+the data analysis platform supports an analytics engine that converts
+unstructured data into structured data and combines it with existing
+structured data. Section~\ref{sec:structuring} discusses the design
+decisions taken to accommodate the need for structuring of data.
+
+  \item \textbf{Ease of Use}
+
+    Finally, the entire system should be relatively easy to use.
+Although ease of use is subjective and hard to measure, we discuss the
+design decisions and argue how the decisions increase the usability of the
+platform and data analytics engines in Section~\ref{sec:ease}. In
+general, systems are easier to use when presented with intuitive
+graphical user interfaces and minimalistic configuration/command line
+interaction.
+
+\end{enumerate} 

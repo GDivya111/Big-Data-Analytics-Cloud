@@ -1,0 +1,528 @@
+[root@team1-dev-base local]# ls
+bin  conf  lib  logs  plugins  test  urls
+[root@team1-dev-base local]# echo "https://www.ncsu.edu/" > urls/seed.txt 
+[root@team1-dev-base local]# cat urls/seed.txt 
+https://www.ncsu.edu/
+[root@team1-dev-base local]# bin/nutch inject urls
+InjectorJob: starting at 2017-04-15 18:17:36
+InjectorJob: Injecting urlDir: urls
+InjectorJob: Using class org.apache.gora.cassandra.store.CassandraStore as the Gora storage class.
+InjectorJob: total number of urls rejected by filters: 0
+InjectorJob: total number of urls injected after normalization and filtering: 1
+Injector: finished at 2017-04-15 18:17:38, elapsed: 00:00:02
+[root@team1-dev-base local]# bin/nutch generate -topN 500
+GeneratorJob: starting at 2017-04-15 18:17:57
+GeneratorJob: Selecting best-scoring urls due for fetch.
+GeneratorJob: starting
+GeneratorJob: filtering: true
+GeneratorJob: normalizing: true
+GeneratorJob: topN: 500
+GeneratorJob: finished at 2017-04-15 18:17:59, time elapsed: 00:00:02
+GeneratorJob: generated batch id: 1492294677-851674510
+[root@team1-dev-base local]# bin/nutch fetch 1492294677-851674510 -resume
+FetcherJob: starting
+FetcherJob: batchId: 1492294677-851674510
+Fetcher: Your 'http.agent.name' value should be listed first in 'http.robots.agents' property.
+FetcherJob: threads: 10
+FetcherJob: parsing: false
+FetcherJob: resuming: true
+FetcherJob : timelimit set for : -1
+Using queue mode : byHost
+Fetcher: threads: 10
+QueueFeeder finished: total 0 records. Hit by time limit :0
+-finishing thread FetcherThread0, activeThreads=0
+-finishing thread FetcherThread1, activeThreads=0
+-finishing thread FetcherThread2, activeThreads=0
+-finishing thread FetcherThread3, activeThreads=1
+-finishing thread FetcherThread4, activeThreads=1
+-finishing thread FetcherThread5, activeThreads=0
+-finishing thread FetcherThread6, activeThreads=0
+-finishing thread FetcherThread7, activeThreads=0
+Fetcher: throughput threshold: -1
+Fetcher: throughput threshold sequence: 5
+-finishing thread FetcherThread8, activeThreads=0
+-finishing thread FetcherThread9, activeThreads=0
+0/0 spinwaiting/active, 0 pages, 0 errors, 0.0 0 pages/s, 0 0 kb/s, 0 URLs in 0 queues
+-activeThreads=0
+FetcherJob: done
+[root@team1-dev-base local]# bin/nutch 1492294677-851674510 -force
+Error: Could not find or load main class 1492294677-851674510
+[root@team1-dev-base local]# bin/nutch parse 1492294677-851674510 -force
+ParserJob: starting
+ParserJob: resuming:	false
+ParserJob: forced reparse:	true
+ParserJob: batchId:	1492294677-851674510
+ParserJob: success
+[root@team1-dev-base local]# bin/nutch updatedb
+DbUpdaterJob: starting
+DbUpdaterJob: done
+[root@team1-dev-base local]# bin/nutch solrindex http://localhost:8983/solr/nutch_core -all
+SolrIndexerJob: starting
+SolrIndexerJob: done.
+[root@team1-dev-base local]# 
+[root@team1-dev-base local]# ls
+bin  conf  lib  logs  plugins  test  urls
+[root@team1-dev-base local]# cd logs/
+[root@team1-dev-base logs]# ls
+hadoop.log
+[root@team1-dev-base logs]# tail -f hadoop.log 
+2017-04-15 18:19:44,226 INFO  solr.SolrMappingReader - source: digest dest: digest
+2017-04-15 18:19:44,226 INFO  solr.SolrMappingReader - source: tstamp dest: tstamp
+2017-04-15 18:19:44,228 INFO  basic.BasicIndexingFilter - Maximum title length for indexing set to: 100
+2017-04-15 18:19:44,228 INFO  indexer.IndexingFilters - Adding org.apache.nutch.indexer.basic.BasicIndexingFilter
+2017-04-15 18:19:44,228 INFO  anchor.AnchorIndexingFilter - Anchor deduplication is: off
+2017-04-15 18:19:44,228 INFO  indexer.IndexingFilters - Adding org.apache.nutch.indexer.anchor.AnchorIndexingFilter
+2017-04-15 18:19:44,229 ERROR store.CassandraStore - All host pools marked down. Retry burden pushed out to client.
+2017-04-15 18:19:44,230 ERROR store.CassandraStore - [Ljava.lang.StackTraceElement;@6e8a3bf2
+2017-04-15 18:19:44,241 WARN  mapred.FileOutputCommitter - Output path is null in cleanup
+2017-04-15 18:19:45,152 INFO  solr.SolrIndexerJob - SolrIndexerJob: done.
+^C
+[root@team1-dev-base logs]# tail -n 100 hadoop.log 
+2017-04-15 18:18:24,416 INFO  fetcher.FetcherJob - -finishing thread FetcherThread9, activeThreads=0
+2017-04-15 18:18:29,416 INFO  fetcher.FetcherJob - 0/0 spinwaiting/active, 0 pages, 0 errors, 0.0 0 pages/s, 0 0 kb/s, 0 URLs in 0 queues
+2017-04-15 18:18:29,416 INFO  fetcher.FetcherJob - -activeThreads=0
+2017-04-15 18:18:29,418 WARN  mapred.FileOutputCommitter - Output path is null in cleanup
+2017-04-15 18:18:30,219 INFO  fetcher.FetcherJob - FetcherJob: done
+2017-04-15 18:18:59,902 INFO  parse.ParserJob - ParserJob: starting
+2017-04-15 18:18:59,904 INFO  parse.ParserJob - ParserJob: resuming:	false
+2017-04-15 18:18:59,904 INFO  parse.ParserJob - ParserJob: forced reparse:	true
+2017-04-15 18:18:59,904 INFO  parse.ParserJob - ParserJob: batchId:	1492294677-851674510
+2017-04-15 18:19:00,784 INFO  crawl.SignatureFactory - Using Signature impl: org.apache.nutch.crawl.MD5Signature
+2017-04-15 18:19:01,095 INFO  connection.CassandraHostRetryService - Downed Host Retry service started with queue size -1 and retry delay 10s
+2017-04-15 18:19:01,116 ERROR connection.HConnectionManager - Could not start connection pool for host 192.168.72.5(192.168.72.5):9160
+2017-04-15 18:19:01,116 INFO  connection.CassandraHostRetryService - Host detected as down was added to retry queue: 192.168.72.5(192.168.72.5):9160
+2017-04-15 18:19:01,118 WARN  connection.CassandraHostRetryService - Downed 192.168.72.5(192.168.72.5):9160 host still appears to be down: Unable to open transport to 192.168.72.5(192.168.72.5):9160 , java.net.ConnectException: Connection refused (Connection refused)
+2017-04-15 18:19:01,173 INFO  service.JmxMonitor - Registering JMX me.prettyprint.cassandra.service_Test Cluster:ServiceType=hector,MonitorType=hector
+2017-04-15 18:19:01,178 ERROR store.CassandraStore - All host pools marked down. Retry burden pushed out to client.
+2017-04-15 18:19:01,178 ERROR store.CassandraStore - [Ljava.lang.StackTraceElement;@7d40a941
+2017-04-15 18:19:01,214 ERROR store.CassandraStore - All host pools marked down. Retry burden pushed out to client.
+2017-04-15 18:19:01,214 ERROR store.CassandraStore - [Ljava.lang.StackTraceElement;@794a84b6
+2017-04-15 18:19:01,258 WARN  util.NativeCodeLoader - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+2017-04-15 18:19:01,309 ERROR store.CassandraStore - All host pools marked down. Retry burden pushed out to client.
+2017-04-15 18:19:01,309 ERROR store.CassandraStore - [Ljava.lang.StackTraceElement;@228a7318
+2017-04-15 18:19:01,676 ERROR store.CassandraStore - All host pools marked down. Retry burden pushed out to client.
+2017-04-15 18:19:01,676 ERROR store.CassandraStore - [Ljava.lang.StackTraceElement;@3b94ae83
+2017-04-15 18:19:01,679 ERROR store.CassandraStore - All host pools marked down. Retry burden pushed out to client.
+2017-04-15 18:19:01,679 ERROR store.CassandraStore - [Ljava.lang.StackTraceElement;@5116331d
+2017-04-15 18:19:01,681 ERROR store.CassandraStore - All host pools marked down. Retry burden pushed out to client.
+2017-04-15 18:19:01,681 ERROR store.CassandraStore - [Ljava.lang.StackTraceElement;@875de82
+2017-04-15 18:19:01,685 INFO  mapreduce.GoraRecordReader - gora.buffer.read.limit = 10000
+2017-04-15 18:19:01,687 ERROR store.CassandraStore - All host pools marked down. Retry burden pushed out to client.
+2017-04-15 18:19:01,688 ERROR store.CassandraStore - [Ljava.lang.StackTraceElement;@5b02b5ab
+2017-04-15 18:19:01,688 INFO  mapreduce.GoraRecordWriter - gora.buffer.write.limit = 10000
+2017-04-15 18:19:01,693 INFO  crawl.SignatureFactory - Using Signature impl: org.apache.nutch.crawl.MD5Signature
+2017-04-15 18:19:01,732 WARN  mapred.FileOutputCommitter - Output path is null in cleanup
+2017-04-15 18:19:02,587 INFO  parse.ParserJob - ParserJob: success
+2017-04-15 18:19:21,662 INFO  crawl.DbUpdaterJob - DbUpdaterJob: starting
+2017-04-15 18:19:22,476 INFO  connection.CassandraHostRetryService - Downed Host Retry service started with queue size -1 and retry delay 10s
+2017-04-15 18:19:22,497 ERROR connection.HConnectionManager - Could not start connection pool for host 192.168.72.5(192.168.72.5):9160
+2017-04-15 18:19:22,497 INFO  connection.CassandraHostRetryService - Host detected as down was added to retry queue: 192.168.72.5(192.168.72.5):9160
+2017-04-15 18:19:22,499 WARN  connection.CassandraHostRetryService - Downed 192.168.72.5(192.168.72.5):9160 host still appears to be down: Unable to open transport to 192.168.72.5(192.168.72.5):9160 , java.net.ConnectException: Connection refused (Connection refused)
+2017-04-15 18:19:22,556 INFO  service.JmxMonitor - Registering JMX me.prettyprint.cassandra.service_Test Cluster:ServiceType=hector,MonitorType=hector
+2017-04-15 18:19:22,562 ERROR store.CassandraStore - All host pools marked down. Retry burden pushed out to client.
+2017-04-15 18:19:22,562 ERROR store.CassandraStore - [Ljava.lang.StackTraceElement;@7a367d11
+2017-04-15 18:19:22,599 ERROR store.CassandraStore - All host pools marked down. Retry burden pushed out to client.
+2017-04-15 18:19:22,599 ERROR store.CassandraStore - [Ljava.lang.StackTraceElement;@380af6da
+2017-04-15 18:19:22,642 WARN  util.NativeCodeLoader - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+2017-04-15 18:19:22,691 ERROR store.CassandraStore - All host pools marked down. Retry burden pushed out to client.
+2017-04-15 18:19:22,691 ERROR store.CassandraStore - [Ljava.lang.StackTraceElement;@3d233b70
+2017-04-15 18:19:23,048 ERROR store.CassandraStore - All host pools marked down. Retry burden pushed out to client.
+2017-04-15 18:19:23,048 ERROR store.CassandraStore - [Ljava.lang.StackTraceElement;@51ebdc1d
+2017-04-15 18:19:23,051 ERROR store.CassandraStore - All host pools marked down. Retry burden pushed out to client.
+2017-04-15 18:19:23,052 ERROR store.CassandraStore - [Ljava.lang.StackTraceElement;@5ff3bbc4
+2017-04-15 18:19:23,053 ERROR store.CassandraStore - All host pools marked down. Retry burden pushed out to client.
+2017-04-15 18:19:23,053 ERROR store.CassandraStore - [Ljava.lang.StackTraceElement;@7aac7212
+2017-04-15 18:19:23,057 INFO  mapreduce.GoraRecordReader - gora.buffer.read.limit = 10000
+2017-04-15 18:19:23,133 ERROR store.CassandraStore - All host pools marked down. Retry burden pushed out to client.
+2017-04-15 18:19:23,133 ERROR store.CassandraStore - [Ljava.lang.StackTraceElement;@59ac2c6a
+2017-04-15 18:19:23,133 INFO  mapreduce.GoraRecordWriter - gora.buffer.write.limit = 10000
+2017-04-15 18:19:23,137 INFO  crawl.FetchScheduleFactory - Using FetchSchedule impl: org.apache.nutch.crawl.DefaultFetchSchedule
+2017-04-15 18:19:23,137 INFO  crawl.AbstractFetchSchedule - defaultInterval=2592000
+2017-04-15 18:19:23,137 INFO  crawl.AbstractFetchSchedule - maxInterval=7776000
+2017-04-15 18:19:23,139 WARN  mapred.FileOutputCommitter - Output path is null in cleanup
+2017-04-15 18:19:23,963 INFO  crawl.DbUpdaterJob - DbUpdaterJob: done
+2017-04-15 18:19:42,744 INFO  solr.SolrIndexerJob - SolrIndexerJob: starting
+2017-04-15 18:19:43,116 INFO  basic.BasicIndexingFilter - Maximum title length for indexing set to: 100
+2017-04-15 18:19:43,116 INFO  indexer.IndexingFilters - Adding org.apache.nutch.indexer.basic.BasicIndexingFilter
+2017-04-15 18:19:43,118 INFO  anchor.AnchorIndexingFilter - Anchor deduplication is: off
+2017-04-15 18:19:43,118 INFO  indexer.IndexingFilters - Adding org.apache.nutch.indexer.anchor.AnchorIndexingFilter
+2017-04-15 18:19:43,589 INFO  connection.CassandraHostRetryService - Downed Host Retry service started with queue size -1 and retry delay 10s
+2017-04-15 18:19:43,611 ERROR connection.HConnectionManager - Could not start connection pool for host 192.168.72.5(192.168.72.5):9160
+2017-04-15 18:19:43,611 INFO  connection.CassandraHostRetryService - Host detected as down was added to retry queue: 192.168.72.5(192.168.72.5):9160
+2017-04-15 18:19:43,612 WARN  connection.CassandraHostRetryService - Downed 192.168.72.5(192.168.72.5):9160 host still appears to be down: Unable to open transport to 192.168.72.5(192.168.72.5):9160 , java.net.ConnectException: Connection refused (Connection refused)
+2017-04-15 18:19:43,670 INFO  service.JmxMonitor - Registering JMX me.prettyprint.cassandra.service_Test Cluster:ServiceType=hector,MonitorType=hector
+2017-04-15 18:19:43,676 ERROR store.CassandraStore - All host pools marked down. Retry burden pushed out to client.
+2017-04-15 18:19:43,676 ERROR store.CassandraStore - [Ljava.lang.StackTraceElement;@7d38fe2b
+2017-04-15 18:19:43,754 WARN  util.NativeCodeLoader - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+2017-04-15 18:19:43,802 ERROR store.CassandraStore - All host pools marked down. Retry burden pushed out to client.
+2017-04-15 18:19:43,803 ERROR store.CassandraStore - [Ljava.lang.StackTraceElement;@70d7aff7
+2017-04-15 18:19:44,182 ERROR store.CassandraStore - All host pools marked down. Retry burden pushed out to client.
+2017-04-15 18:19:44,182 ERROR store.CassandraStore - [Ljava.lang.StackTraceElement;@43bd856
+2017-04-15 18:19:44,187 ERROR store.CassandraStore - All host pools marked down. Retry burden pushed out to client.
+2017-04-15 18:19:44,187 ERROR store.CassandraStore - [Ljava.lang.StackTraceElement;@6f81f3d1
+2017-04-15 18:19:44,189 ERROR store.CassandraStore - All host pools marked down. Retry burden pushed out to client.
+2017-04-15 18:19:44,189 ERROR store.CassandraStore - [Ljava.lang.StackTraceElement;@3cae5788
+2017-04-15 18:19:44,195 INFO  mapreduce.GoraRecordReader - gora.buffer.read.limit = 10000
+2017-04-15 18:19:44,226 INFO  solr.SolrMappingReader - source: content dest: content
+2017-04-15 18:19:44,226 INFO  solr.SolrMappingReader - source: title dest: title
+2017-04-15 18:19:44,226 INFO  solr.SolrMappingReader - source: host dest: host
+2017-04-15 18:19:44,226 INFO  solr.SolrMappingReader - source: batchId dest: batchId
+2017-04-15 18:19:44,226 INFO  solr.SolrMappingReader - source: boost dest: boost
+2017-04-15 18:19:44,226 INFO  solr.SolrMappingReader - source: digest dest: digest
+2017-04-15 18:19:44,226 INFO  solr.SolrMappingReader - source: tstamp dest: tstamp
+2017-04-15 18:19:44,228 INFO  basic.BasicIndexingFilter - Maximum title length for indexing set to: 100
+2017-04-15 18:19:44,228 INFO  indexer.IndexingFilters - Adding org.apache.nutch.indexer.basic.BasicIndexingFilter
+2017-04-15 18:19:44,228 INFO  anchor.AnchorIndexingFilter - Anchor deduplication is: off
+2017-04-15 18:19:44,228 INFO  indexer.IndexingFilters - Adding org.apache.nutch.indexer.anchor.AnchorIndexingFilter
+2017-04-15 18:19:44,229 ERROR store.CassandraStore - All host pools marked down. Retry burden pushed out to client.
+2017-04-15 18:19:44,230 ERROR store.CassandraStore - [Ljava.lang.StackTraceElement;@6e8a3bf2
+2017-04-15 18:19:44,241 WARN  mapred.FileOutputCommitter - Output path is null in cleanup
+2017-04-15 18:19:45,152 INFO  solr.SolrIndexerJob - SolrIndexerJob: done.
+[root@team1-dev-base logs]# ls
+hadoop.log
+[root@team1-dev-base logs]# cd ..
+[root@team1-dev-base local]# ls
+bin  conf  lib  logs  plugins  test  urls
+[root@team1-dev-base local]# 
+[root@team1-dev-base local]# lcd
+bash: lcd: command not found
+[root@team1-dev-base local]# bin/nutch inject urls
+InjectorJob: starting at 2017-04-15 18:23:38
+InjectorJob: Injecting urlDir: urls
+InjectorJob: Using class org.apache.gora.cassandra.store.CassandraStore as the Gora storage class.
+InjectorJob: total number of urls rejected by filters: 0
+InjectorJob: total number of urls injected after normalization and filtering: 1
+Injector: finished at 2017-04-15 18:23:40, elapsed: 00:00:02
+[root@team1-dev-base local]# bin/nutch generate -topN 500
+GeneratorJob: starting at 2017-04-15 18:23:56
+GeneratorJob: Selecting best-scoring urls due for fetch.
+GeneratorJob: starting
+GeneratorJob: filtering: true
+GeneratorJob: normalizing: true
+GeneratorJob: topN: 500
+GeneratorJob: finished at 2017-04-15 18:23:59, time elapsed: 00:00:03
+GeneratorJob: generated batch id: 1492295036-1459855204
+[root@team1-dev-base local]# bin/nutch fetch 1492295036-1459855204 -resume
+FetcherJob: starting
+FetcherJob: batchId: 1492295036-1459855204
+Fetcher: Your 'http.agent.name' value should be listed first in 'http.robots.agents' property.
+FetcherJob: threads: 10
+FetcherJob: parsing: false
+FetcherJob: resuming: true
+FetcherJob : timelimit set for : -1
+Using queue mode : byHost
+Fetcher: threads: 10
+fetching http://wiki.apache.org/nutch/FAQ (queue crawl delay=5000ms)
+fetching http://nutch.apache.org/mailing_lists.html (queue crawl delay=5000ms)
+fetching http://avro.apache.org/ (queue crawl delay=5000ms)
+fetching https://www.flickr.com/photos/andrewfhart/8106189987/ (queue crawl delay=5000ms)
+fetching http://blog.foofactory.fi/2007/03/twice-speed-half-size.html (queue crawl delay=5000ms)
+fetching http://www.apache.org/dist/nutch/2.2.1/CHANGES-2.2.1.txt (queue crawl delay=5000ms)
+fetching https://issues.apache.org/jira/browse/NUTCH-1591 (queue crawl delay=5000ms)
+fetching https://twitter.com/TheASF (queue crawl delay=5000ms)
+fetching http://eu.apachecon.com/c/aceu2009/sessions/197 (queue crawl delay=5000ms)
+Fetcher: throughput threshold: -1
+Fetcher: throughput threshold sequence: 5
+fetching http://mongodb.org/ (queue crawl delay=5000ms)
+QueueFeeder finished: total 117 records. Hit by time limit :0
+fetching http://www.cafepress.com/nutch (queue crawl delay=5000ms)
+fetching http://wicket.apache.org/ (queue crawl delay=5000ms)
+fetching http://www.us.apachecon.com/c/acus2009/sessions/335 (queue crawl delay=5000ms)
+fetching http://gora.apache.org/ (queue crawl delay=5000ms)
+fetching http://hadoop.apache.org/ (queue crawl delay=5000ms)
+fetching http://cassandra.apache.org/ (queue crawl delay=5000ms)
+fetching https://creativecommons.org/licenses/by-sa/2.0/ (queue crawl delay=5000ms)
+fetching http://www.elasticsearch.org/ (queue crawl delay=5000ms)
+fetching https://wiki.apache.org/nutch/NutchRESTAPI (queue crawl delay=5000ms)
+fetching https://whimsy.apache.org/board/minutes/Nutch.html (queue crawl delay=5000ms)
+fetching http://lucene.apache.org/solr (queue crawl delay=5000ms)
+fetching http://code.google.com/p/crawler-commons/ (queue crawl delay=5000ms)
+fetching https://www.google-melange.com/gsoc/homepage/google/gsoc2014 (queue crawl delay=5000ms)
+fetching http://osuosl.org/news_folder/nutch (queue crawl delay=5000ms)
+fetching http://sched.co/1pbE15n (queue crawl delay=5000ms)
+fetching http://s.apache.org/1zE (queue crawl delay=5000ms)
+fetch of https://www.google-melange.com/gsoc/homepage/google/gsoc2014 failed with: javax.net.ssl.SSLHandshakeException: Remote host closed connection during handshake
+fetching http://www.eu.apachecon.com/c/aceu2009/ (queue crawl delay=5000ms)
+fetch of http://www.eu.apachecon.com/c/aceu2009/ failed with: java.net.UnknownHostException: www.eu.apachecon.com
+fetching http://accumulo.apache.org/ (queue crawl delay=5000ms)
+fetching http://creativecommons.org/press-releases/entry/5064 (queue crawl delay=5000ms)
+fetching https://s.apache.org/nutch1.12 (queue crawl delay=5000ms)
+fetching http://events.linuxfoundation.org/events/apachecon-north-america (queue crawl delay=5000ms)
+fetching http://hbase.apache.org/ (queue crawl delay=5000ms)
+fetching http://www.brics.dk/automaton/automaton (queue crawl delay=5000ms)
+fetching https://builds.apache.org/view/M-R/view/Nutch/ (queue crawl delay=5000ms)
+fetching https://www.ncsu.edu/ (queue crawl delay=5000ms)
+fetching https://twitter.com/cutting/status/233415059798372353 (queue crawl delay=1000ms)
+fetching http://t.co/k3VLhbJQhg (queue crawl delay=5000ms)
+fetching http://tika.apache.org/ (queue crawl delay=5000ms)
+fetching http://search.maven.org/ (queue crawl delay=5000ms)
+fetching https://cwiki.apache.org/confluence/display/solr/SolrCloud (queue crawl delay=5000ms)
+fetch of http://www.brics.dk/automaton/automaton failed with: Http code=403, url=http://www.brics.dk/automaton/automaton
+fetching https://twitter.com/ApacheNutch/status/591359830171856896 (queue crawl delay=1000ms)
+fetching http://www.apache.org/dist/nutch/2.0/CHANGES.txt (queue crawl delay=4000ms)
+fetching https://twitter.com/ApacheNutch (queue crawl delay=1000ms)
+9/10 spinwaiting/active, 38 pages, 3 errors, 7.6 8 pages/s, 1663 1663 kb/s, 74 URLs in 16 queues
+fetching http://www.us.apachecon.com/c/acus2009/sessions/333 (queue crawl delay=4000ms)
+fetching http://eu.apachecon.com/c/aceu2009/sessions/250 (queue crawl delay=5000ms)
+fetching http://nutch.apache.org/downloads.html (queue crawl delay=5000ms)
+fetching http://wiki.apache.org/nutch/Becoming_A_Nutch_Developer (queue crawl delay=5000ms)
+fetching https://issues.apache.org/jira/browse/NUTCH-1047 (queue crawl delay=5000ms)
+fetching https://www.flickr.com/photos/andrewfhart/8106200690/ (queue crawl delay=5000ms)
+fetching https://wiki.apache.org/nutch/FrontPage (queue crawl delay=5000ms)
+fetching http://lucene.apache.org/ (queue crawl delay=5000ms)
+fetching http://sched.co/1pav9xl (queue crawl delay=5000ms)
+fetching http://s.apache.org/1.9-release (queue crawl delay=5000ms)
+fetching https://s.apache.org/wq3x (queue crawl delay=5000ms)
+fetching http://www.brics.dk/automaton/ (queue crawl delay=5000ms)
+fetching http://tika.apache.org/1.2/index.html (queue crawl delay=5000ms)
+fetching http://www.apache.org/dist/nutch/1.9/CHANGES.txt (queue crawl delay=4000ms)
+fetching http://www.us.apachecon.com/c/acus2009/sessions/427 (queue crawl delay=4000ms)
+10/10 spinwaiting/active, 54 pages, 3 errors, 5.4 3 pages/s, 1205 747 kb/s, 59 URLs in 10 queues
+fetching http://eu.apachecon.com/c/aceu2009/sessions/137 (queue crawl delay=5000ms)
+fetching http://nutch.apache.org/credits.html (queue crawl delay=5000ms)
+fetching http://wiki.apache.org/nutch/NutchPropertiesCompleteList (queue crawl delay=5000ms)
+fetching https://issues.apache.org/jira/browse/NUTCH-841 (queue crawl delay=5000ms)
+fetching https://www.flickr.com/photos/mrmuskrat/3637703614/ (queue crawl delay=5000ms)
+fetching http://www.apache.org/dist/nutch/CHANGES-1.4.txt (queue crawl delay=4000ms)
+fetching http://s.apache.org/nutch11 (queue crawl delay=5000ms)
+fetching http://lucene.apache.org/solr/ (queue crawl delay=5000ms)
+fetching http://www.us.apachecon.com/c/acus2009/sessions/332 (queue crawl delay=4000ms)
+fetching http://events.linuxfoundation.org/events/apachecon-europe (queue crawl delay=10000ms)
+9/10 spinwaiting/active, 63 pages, 3 errors, 4.2 2 pages/s, 933 389 kb/s, 49 URLs in 9 queues
+fetching http://eu.apachecon.com/c/aceu2009/sessions/251 (queue crawl delay=5000ms)
+fetching http://wiki.apache.org/nutch/ (queue crawl delay=5000ms)
+fetching http://nutch.apache.org/bot.html (queue crawl delay=5000ms)
+fetching http://www.apache.org/foundation/thanks.html (queue crawl delay=4000ms)
+fetching https://issues.apache.org/jira/browse/NUTCH/ (queue crawl delay=5000ms)
+fetching http://www.us.apachecon.com/c/acus2009/ (queue crawl delay=4000ms)
+fetching http://s.apache.org/nutch10 (queue crawl delay=5000ms)
+fetching https://www.flickr.com/photos/splorp/3981832163/ (queue crawl delay=5000ms)
+9/10 spinwaiting/active, 71 pages, 3 errors, 3.6 2 pages/s, 769 278 kb/s, 41 URLs in 6 queues
+fetching http://www.apache.org/foundation/records/minutes/2010/board_minutes_2010_04_21.txt (queue crawl delay=4000ms)
+fetching http://eu.apachecon.com/c/aceu2009/sessions/165 (queue crawl delay=5000ms)
+fetching http://www.us.apachecon.com/c/acus2009/sessions/461 (queue crawl delay=4000ms)
+fetching http://nutch.apache.org/index.html (queue crawl delay=5000ms)
+fetching http://s.apache.org/nutch_2.3.1 (queue crawl delay=5000ms)
+10/10 spinwaiting/active, 77 pages, 3 errors, 3.1 1 pages/s, 697 406 kb/s, 36 URLs in 5 queues
+fetching http://www.apache.org/dist/nutch/CHANGES-1.5.txt (queue crawl delay=4000ms)
+fetching http://www.us.apachecon.com/c/acus2009/sessions/334 (queue crawl delay=4000ms)
+fetching http://eu.apachecon.com/c/aceu2009/sessions/201 (queue crawl delay=5000ms)
+fetching http://nutch.apache.org/javadoc.html (queue crawl delay=5000ms)
+fetching http://s.apache.org/nutch_2.3 (queue crawl delay=5000ms)
+fetching http://www.apache.org/dist/nutch/1.6/CHANGES_1.6.txt (queue crawl delay=4000ms)
+fetching http://www.us.apachecon.com/c/acus2009/sessions/428 (queue crawl delay=4000ms)
+8/10 spinwaiting/active, 82 pages, 3 errors, 2.7 1 pages/s, 586 33 kb/s, 29 URLs in 5 queues
+fetching http://eu.apachecon.com/c/aceu2009/sessions/136 (queue crawl delay=5000ms)
+fetching http://nutch.apache.org/version_control.html (queue crawl delay=5000ms)
+fetching http://s.apache.org/oHY (queue crawl delay=5000ms)
+fetching http://www.apache.org/licenses/ (queue crawl delay=4000ms)
+fetching http://www.us.apachecon.com/c/acus2009/sessions/437 (queue crawl delay=4000ms)
+10/10 spinwaiting/active, 89 pages, 3 errors, 2.5 1 pages/s, 511 61 kb/s, 24 URLs in 4 queues
+fetching http://eu.apachecon.com/c/aceu2009/sessions/138 (queue crawl delay=5000ms)
+fetching http://www.us.apachecon.com/c/acus2009/sessions/462 (queue crawl delay=4000ms)
+fetching http://www.apache.org/foundation/sponsorship.html (queue crawl delay=4000ms)
+fetching http://s.apache.org/PGa (queue crawl delay=5000ms)
+10/10 spinwaiting/active, 93 pages, 3 errors, 2.3 1 pages/s, 451 34 kb/s, 20 URLs in 3 queues
+fetching http://www.us.apachecon.com/c/acus2009/sessions/375 (queue crawl delay=4000ms)
+fetching http://www.apache.org/ (queue crawl delay=4000ms)
+fetching http://s.apache.org/LPB (queue crawl delay=5000ms)
+10/10 spinwaiting/active, 96 pages, 3 errors, 2.1 1 pages/s, 411 87 kb/s, 17 URLs in 2 queues
+fetching http://www.us.apachecon.com/c/acus2009/sessions/430 (queue crawl delay=4000ms)
+fetching http://www.apache.org/dist/nutch/1.8/CHANGES.txt (queue crawl delay=4000ms)
+10/10 spinwaiting/active, 98 pages, 3 errors, 2.0 0 pages/s, 370 0 kb/s, 15 URLs in 2 queues
+fetching http://www.us.apachecon.com/c/acus2009/sessions/331 (queue crawl delay=4000ms)
+fetching http://www.apache.org/dist/nutch/CHANGES-0.9.txt (queue crawl delay=4000ms)
+fetching http://www.us.apachecon.com/c/acus2009/schedule (queue crawl delay=4000ms)
+9/10 spinwaiting/active, 100 pages, 3 errors, 1.8 0 pages/s, 336 0 kb/s, 12 URLs in 2 queues
+fetching http://www.apache.org/dist/nutch/CHANGES-1.1.txt (queue crawl delay=4000ms)
+fetching http://www.apache.org/licenses/LICENSE-2.0 (queue crawl delay=4000ms)
+9/10 spinwaiting/active, 102 pages, 3 errors, 1.7 0 pages/s, 308 0 kb/s, 10 URLs in 1 queues
+fetching http://www.apache.org/dist/nutch/CHANGES-1.2.txt (queue crawl delay=4000ms)
+10/10 spinwaiting/active, 104 pages, 3 errors, 1.6 0 pages/s, 287 36 kb/s, 9 URLs in 1 queues
+fetching http://www.apache.org/dist/nutch/1.7/1.7-CHANGES.txt (queue crawl delay=4000ms)
+10/10 spinwaiting/active, 105 pages, 3 errors, 1.5 0 pages/s, 267 0 kb/s, 8 URLs in 1 queues
+fetching http://www.apache.org/dist/nutch/CHANGES-1.3.txt (queue crawl delay=4000ms)
+10/10 spinwaiting/active, 106 pages, 3 errors, 1.4 0 pages/s, 249 0 kb/s, 7 URLs in 1 queues
+fetching http://www.apache.org/dist/nutch/1.5.1/CHANGES.txt (queue crawl delay=4000ms)
+10/10 spinwaiting/active, 107 pages, 3 errors, 1.3 0 pages/s, 233 0 kb/s, 6 URLs in 1 queues
+fetching http://www.apache.org/dist/nutch/CHANGES-0.8.1.txt (queue crawl delay=4000ms)
+10/10 spinwaiting/active, 108 pages, 3 errors, 1.3 0 pages/s, 220 0 kb/s, 5 URLs in 1 queues
+fetching http://www.apache.org/dist/nutch/2.2/2.2-CHANGES.txt (queue crawl delay=4000ms)
+fetching http://www.apache.org/dyn/closer.cgi/nutch/ (queue crawl delay=4000ms)
+10/10 spinwaiting/active, 110 pages, 3 errors, 1.2 0 pages/s, 209 30 kb/s, 3 URLs in 1 queues
+* queue: http://www.apache.org
+  maxThreads    = 1
+  inProgress    = 0
+  crawlDelay    = 4000
+  minCrawlDelay = 0
+  nextFetchTime = 1492295155422
+  now           = 1492295151985
+  0. http://www.apache.org/dist/nutch/CHANGES-1.0.txt
+  1. http://www.apache.org/security/
+  2. http://www.apache.org/dist/nutch/2.1/CHANGES-2.1.txt
+fetching http://www.apache.org/dist/nutch/CHANGES-1.0.txt (queue crawl delay=4000ms)
+10/10 spinwaiting/active, 111 pages, 3 errors, 1.2 0 pages/s, 198 0 kb/s, 2 URLs in 1 queues
+* queue: http://www.apache.org
+  maxThreads    = 1
+  inProgress    = 0
+  crawlDelay    = 4000
+  minCrawlDelay = 0
+  nextFetchTime = 1492295159585
+  now           = 1492295156986
+  0. http://www.apache.org/security/
+  1. http://www.apache.org/dist/nutch/2.1/CHANGES-2.1.txt
+fetching http://www.apache.org/security/ (queue crawl delay=4000ms)
+10/10 spinwaiting/active, 112 pages, 3 errors, 1.1 0 pages/s, 190 27 kb/s, 1 URLs in 1 queues
+* queue: http://www.apache.org
+  maxThreads    = 1
+  inProgress    = 0
+  crawlDelay    = 4000
+  minCrawlDelay = 0
+  nextFetchTime = 1492295163894
+  now           = 1492295161987
+  0. http://www.apache.org/dist/nutch/2.1/CHANGES-2.1.txt
+fetching http://www.apache.org/dist/nutch/2.1/CHANGES-2.1.txt (queue crawl delay=4000ms)
+-finishing thread FetcherThread1, activeThreads=9
+-finishing thread FetcherThread4, activeThreads=8
+-finishing thread FetcherThread5, activeThreads=7
+-finishing thread FetcherThread8, activeThreads=6
+-finishing thread FetcherThread2, activeThreads=5
+-finishing thread FetcherThread7, activeThreads=4
+-finishing thread FetcherThread9, activeThreads=3
+-finishing thread FetcherThread6, activeThreads=2
+-finishing thread FetcherThread0, activeThreads=1
+-finishing thread FetcherThread3, activeThreads=0
+0/0 spinwaiting/active, 113 pages, 3 errors, 1.1 0 pages/s, 180 0 kb/s, 0 URLs in 0 queues
+-activeThreads=0
+FetcherJob: done
+[root@team1-dev-base local]# bin/nutch parse 1492295036-1459855204 -force
+ParserJob: starting
+ParserJob: resuming:	false
+ParserJob: forced reparse:	true
+ParserJob: batchId:	1492295036-1459855204
+Parsing http://www.apache.org/dist/nutch/CHANGES-0.8.1.txt
+Parsing http://www.us.apachecon.com/c/acus2009/sessions/462
+Parsing http://tika.apache.org/1.2/index.html
+Parsing http://www.us.apachecon.com/c/acus2009/
+Parsing http://www.us.apachecon.com/c/acus2009/sessions/331
+Parsing https://whimsy.apache.org/board/minutes/Nutch.html
+Parsing http://s.apache.org/LPB
+Parsing http://osuosl.org/news_folder/nutch
+Parsing http://www.apache.org/dist/nutch/2.1/CHANGES-2.1.txt
+Parsing http://eu.apachecon.com/c/aceu2009/sessions/197
+Parsing http://wicket.apache.org/
+Parsing http://www.us.apachecon.com/c/acus2009/sessions/437
+Parsing http://www.apache.org/licenses/
+Parsing http://www.eu.apachecon.com/c/aceu2009/
+Parsing http://eu.apachecon.com/c/aceu2009/sessions/250
+Parsing http://www.us.apachecon.com/c/acus2009/sessions/428
+Parsing http://www.apache.org/foundation/sponsorship.html
+Parsing http://www.apache.org/dist/nutch/1.6/CHANGES_1.6.txt
+Parsing http://creativecommons.org/press-releases/entry/5064
+Parsing http://lucene.apache.org/
+Parsing http://www.brics.dk/automaton/automaton
+Parsing http://avro.apache.org/
+Parsing http://www.apache.org/foundation/records/minutes/2010/board_minutes_2010_04_21.txt
+Parsing http://gora.apache.org/
+Parsing http://nutch.apache.org/bot.html
+Parsing http://blog.foofactory.fi/2007/03/twice-speed-half-size.html
+Parsing http://www.us.apachecon.com/c/acus2009/sessions/335
+Parsing https://www.ncsu.edu/
+Parsing http://s.apache.org/1.9-release
+Parsing https://issues.apache.org/jira/browse/NUTCH-1591
+Parsing http://eu.apachecon.com/c/aceu2009/sessions/137
+Parsing http://s.apache.org/1zE
+Parsing http://www.apache.org/dist/nutch/CHANGES-1.2.txt
+Parsing https://issues.apache.org/jira/browse/NUTCH/
+Parsing http://www.apache.org/dist/nutch/2.2/2.2-CHANGES.txt
+Parsing http://events.linuxfoundation.org/events/apachecon-north-america
+Parsing http://www.us.apachecon.com/c/acus2009/schedule
+Parsing http://search.maven.org/
+Parsing https://www.flickr.com/photos/andrewfhart/8106200690/
+Parsing http://s.apache.org/oHY
+Parsing https://twitter.com/ApacheNutch
+Parsing http://lucene.apache.org/solr
+Parsing http://www.apache.org/dist/nutch/2.0/CHANGES.txt
+Parsing http://mongodb.org/
+Parsing http://lucene.apache.org/solr/
+Parsing http://nutch.apache.org/index.html
+Parsing http://nutch.apache.org/credits.html
+Parsing https://www.flickr.com/photos/mrmuskrat/3637703614/
+Parsing http://www.apache.org/dist/nutch/1.8/CHANGES.txt
+Parsing http://hadoop.apache.org/
+Parsing http://www.cafepress.com/nutch
+Parsing https://twitter.com/TheASF
+Parsing http://s.apache.org/nutch10
+Parsing http://code.google.com/p/crawler-commons/
+Parsing http://nutch.apache.org/mailing_lists.html
+Parsing http://wiki.apache.org/nutch/
+Parsing https://issues.apache.org/jira/browse/NUTCH-1047
+Parsing https://s.apache.org/wq3x
+Parsing http://www.apache.org/dist/nutch/CHANGES-1.1.txt
+Parsing https://wiki.apache.org/nutch/FrontPage
+Parsing http://www.us.apachecon.com/c/acus2009/sessions/375
+Parsing http://accumulo.apache.org/
+Parsing http://eu.apachecon.com/c/aceu2009/sessions/138
+Parsing http://s.apache.org/nutch11
+Parsing http://s.apache.org/nutch_2.3
+Parsing http://www.apache.org/dist/nutch/CHANGES-1.5.txt
+Parsing http://www.brics.dk/automaton/
+Parsing https://twitter.com/cutting/status/233415059798372353
+Parsing https://twitter.com/ApacheNutch/status/591359830171856896
+Parsing http://wiki.apache.org/nutch/Becoming_A_Nutch_Developer
+Parsing http://www.apache.org/dist/nutch/CHANGES-1.0.txt
+Parsing http://sched.co/1pbE15n
+Parsing http://nutch.apache.org/version_control.html
+Parsing https://www.google-melange.com/gsoc/homepage/google/gsoc2014
+Parsing http://s.apache.org/nutch_2.3.1
+Parsing http://www.apache.org/dist/nutch/CHANGES-1.3.txt
+Parsing http://nutch.apache.org/javadoc.html
+Parsing http://www.us.apachecon.com/c/acus2009/sessions/333
+Parsing http://www.us.apachecon.com/c/acus2009/sessions/334
+Parsing http://www.apache.org/dist/nutch/1.9/CHANGES.txt
+Parsing http://eu.apachecon.com/c/aceu2009/sessions/251
+Parsing http://www.apache.org/
+Parsing http://www.elasticsearch.org/
+Parsing http://wiki.apache.org/nutch/NutchPropertiesCompleteList
+Parsing http://wiki.apache.org/nutch/FAQ
+Parsing http://events.linuxfoundation.org/events/apachecon-europe
+Parsing https://www.flickr.com/photos/andrewfhart/8106189987/
+Parsing http://eu.apachecon.com/c/aceu2009/sessions/136
+Parsing http://eu.apachecon.com/c/aceu2009/sessions/165
+Parsing http://www.apache.org/security/
+Parsing https://cwiki.apache.org/confluence/display/solr/SolrCloud
+Parsing https://creativecommons.org/licenses/by-sa/2.0/
+Parsing http://www.apache.org/dist/nutch/CHANGES-1.4.txt
+Parsing http://nutch.apache.org/downloads.html
+Parsing https://s.apache.org/nutch1.12
+Parsing http://hbase.apache.org/
+Parsing http://www.apache.org/dist/nutch/1.5.1/CHANGES.txt
+Parsing http://www.apache.org/foundation/thanks.html
+Parsing http://eu.apachecon.com/c/aceu2009/sessions/201
+Parsing http://www.us.apachecon.com/c/acus2009/sessions/461
+Parsing http://s.apache.org/PGa
+Parsing http://www.apache.org/dist/nutch/2.2.1/CHANGES-2.2.1.txt
+Parsing https://builds.apache.org/view/M-R/view/Nutch/
+Parsing http://www.us.apachecon.com/c/acus2009/sessions/427
+Parsing http://www.apache.org/dist/nutch/1.7/1.7-CHANGES.txt
+Parsing http://www.apache.org/dyn/closer.cgi/nutch/
+Parsing http://t.co/k3VLhbJQhg
+Parsing http://www.us.apachecon.com/c/acus2009/sessions/430
+Parsing http://cassandra.apache.org/
+Parsing http://tika.apache.org/
+Parsing https://issues.apache.org/jira/browse/NUTCH-841
+Parsing https://wiki.apache.org/nutch/NutchRESTAPI
+Parsing http://www.us.apachecon.com/c/acus2009/sessions/332
+Parsing https://www.flickr.com/photos/splorp/3981832163/
+Parsing http://www.apache.org/dist/nutch/CHANGES-0.9.txt
+Parsing http://www.apache.org/licenses/LICENSE-2.0
+Parsing http://sched.co/1pav9xl
+ParserJob: success
+[root@team1-dev-base local]# bin/nutch updatedb
+DbUpdaterJob: starting
+DbUpdaterJob: done
+[root@team1-dev-base local]# bin/nutch solrindex http://localhost:8983/solr/nutch_core -all
+SolrIndexerJob: starting
+Adding 46 documents
+SolrIndexerJob: done.
+[root@team1-dev-base local]#

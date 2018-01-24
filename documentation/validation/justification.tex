@@ -1,0 +1,179 @@
+\subsection{Justification}
+\label{sec:justification}
+
+During the design of the system there were many design trade-offs that
+had to be made, we use this section to discuss them in depth.
+
+\begin{enumerate}
+  \item \textbf{Allowing connections from Oscar Proxy}
+
+    One design decision we made directly impacts the security of the
+    system. In our design we allow TCP connections from the Oscar Proxy
+    and the host machine to the guest VMs. By allowing connections from
+    the proxy we increase the attack surface and allow anyone with
+    access to the proxy access to communicate with the guest VM. If
+    the proxy was compromised then it would be possible for the
+    adversary to directly interact with the guest VM and launch attacks 
+    against the guest.
+
+    This design choice was made in favor of usability. Rather than users
+    first signing into the proxy and then signing into host machine
+    before logging into the guest VMs, users can authenticate once and
+    then login to the analysis platform. This also allows users to setup
+    SSH port tunneling to just the proxy instead of chaining port
+    tunneling from the proxy to the host machine to access the internal 
+    web interfaces.
+
+    This design decision can easily be reversed by editing the firewall
+    rules in the Horizon interface to disallow access from the proxy.
+
+  \item \textbf{Creation of a single development VM}
+
+    Designing the system to minimize unneeded software as well as being 
+    flexible to fit the needs of many different data set types often
+    came in direct conflict with each other. As stated in this report
+    platforms that have all tools inside a single image can accommodate 
+    many different data sets but they incur overhead on disk space,
+    memory, and CPU cycle as only a subset of the packages are used for
+    a particular data set. 
+
+    To design an analytics engine for a specific data set there are two
+    approaches: 
+    \begin{enumerate}[1.]
+      \item Place all analysis packages into a single virtual machine
+      \item Place each analysis package in its own virtual machine and
+        chain the virtual machines together via networking to complete a
+        task.
+    \end{enumerate}
+    
+    When considering reliability, approach 1 is better than approach 2.
+    When you have multiple components in parallel with non-100\%
+    reliability the overall reliability of the system is much lower than 
+    any single component. For example, if a network setting in any one
+    of the machines in approach 2 is misconfigured, then the entire
+    system quickly breaks down. Another advantage of approach 1 is the 
+    analysis tools all run on a single Operating System instead of
+    wasting resources by having a full Operating System for each tool.
+
+    On the other hand having all components in a single VM is less
+    flexible than a single VM per component. To accommodate different
+    data sets users either have to add more components to the VM in
+    approach 1, which directly violates the goal of removing unneeded
+    software, or they have to completely rebuild a new vm with the
+    specific tools they need, which is not user friendly. However in 
+    approach 2, a user can create a new VM, install the required
+    component configure the network settings of the VMs in the chain
+    to use the new VM, and finally remove all unneeded component VMs
+    from the chain. Although this approach is slightly more technical
+    it obtains the goal of being able to completely customize a data
+    analysis work flow and minimize unneeded software packages.
+
+    We opted for approach 1 because it increased the reliability,
+    minimized user configuration, and reduced system overhead of running
+    one VM per tool. Initially there will be a large effort to create
+    VMs for each data set, but once created users can reuse previously 
+    built VMs and will only have to select the one that is necessary for
+    their use case.
+
+  \item \textbf{OpenStack Packages}
+
+   We installed the following OpenStack packages because we decided they 
+   were either necessary to support the project requirements, or could
+   aid in obtaining reach goals of the system.
+   
+    \begin{itemize}
+      \item \textbf{MariaDB}
+
+        A database is required by the OpenStack controller node (similar
+        to a VCL management node) to store information information about
+        the deployment. MariaDB is the most common package used for
+        deploying an OpenStack cluster and thus had most debugging
+        information if anything would go wrong.
+
+      \item \textbf{Glance}
+
+        Glance is a necessary component in any OpenStack deployment as
+        it manages virtual machine images.
+
+      \item \textbf{Cinder}
+
+        Cinder was chosen as the block storage management component,
+        Cinder will be used as a future component to attach volumes to
+        guest machines.
+
+      \item \textbf{Nova}
+
+        Nova is another necessary component in an OpenStack component
+        for instance management. 
+
+      \item \textbf{Neutron}
+
+        Neutron is a core OpenStack component that manages the network
+        infrastructure.
+
+      \item \textbf{Horizon}
+
+        Although not required, the Horizon interface is crucial to the 
+        usability of an OpenStack deployment. It provides an easy to use
+        and understand interface allowing the management of all aspects
+        of the cloud.
+
+      \item \textbf{Swift}
+
+        Swift is a crucial component for object storage. Object storage is
+        recognized as the best way to store unstructured data and blobs
+        of data.
+
+      \item \textbf{Ceilometer}
+
+        Ceilometer is a package that collects data produced by OpenStack
+        services, although not directly used by our system we included
+        it for two reasons. First it provides a nice graphical
+        representation of used resources in Horizon. In addition we 
+        decided to include it to support the following two packages.
+        
+        \begin{itemize}
+          \item \textbf{Aodh}
+        
+            This package can be used to trigger events based on data
+            collected by ceilometer, the goal was to use this package
+            to support autoscaling triggered by CPU usage.
+
+          \item \textbf{Gnocchi}
+
+            This package is designed to store large scale metrics and
+            provide an API for accessing the metrics, resource
+            information, and history. This package was intended to be 
+            used by users to get a time series of their resource 
+            consumption and more accurately predict the resources they
+            need based off past events.
+
+        \end{itemize}
+    \end{itemize}
+
+  \item \textbf{Nova Flavor Sizes}
+
+    The default flavors, or instance specifications, generated by Nova
+    do not use all of the host resources. For example, the largest
+    default flavor (m1.xlarge) is 8 VCPUs and 16 GB RAM. If the
+    instances used this flavor there would be almost 100 GB RAM unused.
+    For our initial setup we created 2 custom flavors to use host
+    resources more effectively. The first flavor, m1.dev, was created 
+    for the development machine. It has 10 VCPUs 96 GB RAM, and 100 GB
+    disk space. Since the host has a total of 12 VCPUs and the dev 
+    machine does the computationally expensive data analysis, it
+    received a majority of the VCPUs and RAM to hold data in memory.
+
+    Similarly m1.db, was defined to run the db machine and it has the 2
+    remaining VCPUs, 23 GB RAM (leaving some RAM for the host machine),
+    and 250 GB root disk space.
+
+    These values were chosen rather arbitrarily for the development of
+    our platform and analytics engine, without proper knowledge of the 
+    use case of the system it cannot be determined what the best values
+    for each flavor should be. Also it should be noted different data
+    sets and use cases will need different flavor specifications. To aid
+    in the design of the flavors, data collected by ceilometer and
+    analyzed by Gnocchi can be used.
+
+\end{enumerate}

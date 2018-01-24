@@ -1,0 +1,55 @@
+\subsection{Limitations and Future Work}
+\label{sec:limitations}
+
+In this section we discuss the limitations of both our analytics cloud
+platform and data analysis engine due to functionality we could not
+complete and then end with discussion about future work, such as our
+reach goals.
+
+\subsubsection{Limitations}
+Unfortunately we had one core goal that was not met in the implementation
+of our analytics cloud platform. This goal was not met for a combination 
+of reasons such as time constraints, lack of knowledge, and debugging
+trouble. Here we describe the impact on our system by not implementing
+this core feature.
+
+During the installation of OpenStack we tried multiple times to configure
+Cinder Volumes to use the GPFS just as we configured Nova and Glance.
+Unfortunately, for reasons we believe were caused by an installation bug,
+we ran out of time to continue trouble shooting and reinstalled OpenStack
+to a consistent state and moved on to the implementation of the analysis
+engine without it. The major drawback as result of not configuring Cinder
+to use GPFS is the limited host disk size prevents us from having a
+database machine with a minimum 500 GB of storage space. Given more time
+we believe we could have tracked down the bug and reached this core
+goal.
+
+\subsubsection{Future Work}
+In addition to the core functionality described in the project
+abstract~\cite{abstract}, many reach goals were not met by our design
+and we list them here as future work.
+
+\begin{enumerate}
+  \item \textbf{Data Provenance} Currently our system does not track how
+user data is changed, who changed it, or when it was changed. We do
+acknowledge the seriousness of data provenance a recommend it as a
+priority for future work.
+  \item \textbf{Auto-scaling} We installed base tools to support an
+auto-scaling feature, however due to time constraints we left it
+unimplemented. Future work that includes auto-scaling should also
+explore the trade-offs between the time it takes to operate on a
+particular data set and cost of the resources used.
+  \item \textbf{MySQL vs PostgreSQL} Once again due to time constraints
+we were unable to compare the usage of a MySQL database back end vs. a
+PostgreSQL database back end to hold structured data. Assuming the
+mortar and portrait tools support MySQL databases, this is straight
+forward task that can be done by configuring a second database virtual
+machine with MySQL and changing the environment to use it instead. We
+leave this for future work.
+  \item \textbf{AWS Environment} After the completion of all other reach
+goals, we would have like to explore the ability to port our system to
+Amazon Web Services. If this could be done, then users would be able to
+test their data analysis engines locally and then port them to AWS to
+take advantage of more resources. Once again this was left as future
+work. 
+\end{enumerate}
